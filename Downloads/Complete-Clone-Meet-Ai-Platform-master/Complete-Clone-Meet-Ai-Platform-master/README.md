@@ -1,221 +1,190 @@
 # Meet AI Platform 🚀
 
-Next-generation video conferencing powered by AI: smarter, more productive, and effortlessly organized.
+A next-generation video conferencing platform powered by AI - smarter meetings, more productive discussions, and effortlessly organized.
+
+![Meet AI](https://img.shields.io/badge/Next.js-16.0-black?logo=next.js)
+![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react)
+![Stream](https://img.shields.io/badge/Stream-Video%20SDK-005FFF?logo=stream)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript)
 
 ---
 
-## 🌟 Features
+## ✨ Features
 
-![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/Lostovayne/meet-ai-platform?utm_source=oss&utm_medium=github&utm_campaign=Lostovayne%2Fmeet-ai-platform&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
-
-| Core Functionality      | AI Capabilities         |
-| ----------------------- | ----------------------- |
-| AI-Powered Video Calls  | Custom Real-time Agents |
-| Smart Meeting Summaries | AI Q&A                  |
-| Meeting Recordings      | OpenAI Integration      |
-| Transcript Search       | Smart Transcripts       |
-
----
-
-## 🛠 Technical Stack
-
-| Layer         | Technology                                    |
-| ------------- | --------------------------------------------- |
-| Frontend      | Next.js 16, React 19, Tailwind CSS v4         |
-| UI Components | shadcn/ui                                     |
-| Auth          | Better Auth                                   |
-| Real-time     | Stream Video SDK, Stream Chat SDK             |
-| Background    | Inngest (background jobs)                     |
-| Payments      | Polar subscriptions                           |
-| DB/ORM        | Drizzle ORM                                   |
-| Package Mgmt  | Bun, npm, or yarn                             |
-| Deploy        | Railway (via Docker image from GitHub Packages) |
+| Core Functionality | Technology |
+|-------------------|------------|
+| 📹 Real-time Video Calls | Stream Video SDK |
+| 🤖 AI-Powered Agents | Custom Instructions |
+| 👤 User Authentication | Better Auth |
+| 📊 Dashboard | Modern UI with shadcn/ui |
+| 🗄️ Database | PostgreSQL + Drizzle ORM |
 
 ---
 
-## 📐 Architecture Overview
+## 🛠 Tech Stack
 
-```mermaid
-flowchart TD
-    User[User] -->|Sign In/Up| NextJS[Next.js App]
-    NextJS -->|API Call| AuthAPI[Better Auth API]
-    NextJS -->|Video| StreamSDK[Stream Video/Chat SDK]
-    NextJS -->|AI| OpenAI[OpenAI API]
-    NextJS -->|Payments| Polar[Polar API]
-    NextJS -->|Background| Inngest[Inngest Jobs]
-    NextJS -->|DB| Drizzle[Drizzle ORM]
-```
-
----
-
-## 🔐 Authentication Flow
-
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant FE as Next.js Frontend
-    participant BA as Better Auth API
-    participant DB as Database
-
-    U->>FE: Submit credentials (Sign In/Up)
-    FE->>BA: POST /api/auth
-    BA->>DB: Validate or create user
-    DB-->>BA: User data / Auth token
-    BA-->>FE: Auth token (JWT/session)
-    FE-->>U: Set session, redirect to dashboard
-```
-
----
-
-## 📦 Endpoints principales (API)
-
-| Endpoint                      | Método | Descripción                      |
-| ----------------------------- | ------ | -------------------------------- |
-| `/api/auth/sign-in`           | POST   | Login de usuario                 |
-| `/api/auth/sign-up`           | POST   | Registro de usuario              |
-| `/api/meetings`               | GET    | Listar reuniones                 |
-| `/api/meetings`               | POST   | Crear nueva reunión              |
-| `/api/meetings/:id`           | GET    | Obtener detalles de reunión      |
-| `/api/meetings/:id/summary`   | GET    | Obtener resumen AI de la reunión |
-| `/api/meetings/:id/recording` | GET    | Descargar grabación              |
-| `/api/payments/subscribe`     | POST   | Suscribirse vía Polar            |
-
----
-
-## ⚙️ Variables de entorno
-
-Configura tus variables en `.env.local` (para desarrollo local) y en Railway (para despliegue):
-
-| Variable             | Descripción                          |
-| -------------------- | ------------------------------------ |
-| `STREAM_API_KEY`     | Credencial de Stream Video/Chat      |
-| `STREAM_API_SECRET`  | Secreto de Stream Video/Chat         |
-| `OPENAI_API_KEY`     | Clave de OpenAI                      |
-| `BETTER_AUTH_SECRET` | Secreto para Better Auth             |
-| `POLAR_API`          | Clave para pagos con Polar           |
-| ...                  | Ver `.env.example` para más detalles |
+- **Framework**: Next.js 16 with App Router
+- **UI**: React 19, Tailwind CSS v4, shadcn/ui
+- **Video**: Stream Video React SDK
+- **Auth**: Better Auth with email/password + social providers
+- **Database**: PostgreSQL (Neon) + Drizzle ORM
+- **API**: tRPC for type-safe APIs
+- **State**: TanStack Query (React Query)
 
 ---
 
 ## 🚀 Getting Started
 
-### Prerequisitos
+### Prerequisites
 
 - Node.js 18+
-- Bun (opcional, recomendado)
-- npm o yarn
-- Credenciales de Stream
-- API Key de OpenAI
+- npm, yarn, or bun
+- PostgreSQL database (recommend [Neon](https://neon.tech))
+- Stream.io account
 
-### Instalación
+### Installation
 
 ```bash
-# Clona el repositorio
-git clone https://github.com/LostoVayne/meet-ai-platform.git
-cd meet-ai-platform
+# Clone the repository
+git clone https://github.com/berserk3142-max/meet.ai.git
+cd meet.ai
 
-# Instala dependencias (elige uno)
-bun install
-# o
-npm install
-# o
-yarn
+# Install dependencies
+npm install --legacy-peer-deps
 
-# Configura variables de entorno
+# Set up environment variables
 cp .env.example .env.local
+```
 
-# Inicia el servidor de desarrollo
-bun dev
-# o
+### Environment Variables
+
+Create a `.env.local` file with:
+
+```env
+# Database
+DATABASE_URL="your_postgresql_connection_string"
+
+# Authentication
+BETTER_AUTH_SECRET="your_random_secret_string"
+BETTER_AUTH_URL=http://localhost:3000
+
+# OAuth (Optional)
+GITHUB_CLIENT_ID=""
+GITHUB_CLIENT_SECRET=""
+GOOGLE_CLIENT_ID=""
+GOOGLE_CLIENT_SECRET=""
+
+# Stream Video
+NEXT_PUBLIC_STREAM_API_KEY="your_stream_api_key"
+STREAM_API_SECRET="your_stream_api_secret"
+
+# App URL
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+```
+
+### Database Setup
+
+```bash
+# Push database schema
+npm run db:push
+```
+
+### Run Development Server
+
+```bash
 npm run dev
-# o
-yarn dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 📁 Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── (auth)/            # Authentication pages
+│   ├── (dashboard)/       # Dashboard pages
+│   └── api/               # API routes
+├── components/            # Reusable UI components
+├── db/                    # Database schema & config
+├── lib/                   # Utility libraries
+│   ├── auth.ts           # Better Auth config
+│   ├── stream.ts         # Stream server client
+│   └── stream-provider.tsx # Stream client provider
+├── modules/              # Feature modules
+│   ├── agents/           # AI agents management
+│   ├── meetings/         # Video meetings
+│   └── dashboard/        # Dashboard components
+└── trpc/                 # tRPC router & procedures
 ```
 
 ---
 
-## 🚀 Deployment en Railway
+## 🎥 Video Calling
 
-Este proyecto se despliega en Railway utilizando una imagen Docker que se construye y se sube automáticamente a GitHub Packages mediante GitHub Actions.
+The platform uses **Stream Video SDK** for real-time video conferencing:
 
-### Flujo de Despliegue
+- **Server-side**: Token generation and call management
+- **Client-side**: React SDK with built-in components
+- **Features**: Camera/mic controls, speaker layout, participants view
 
-1.  **Push a la rama `master`**: Al hacer `git push` a la rama `master`, se activa un workflow de GitHub Actions (`.github/workflows/deploy.yml`).
-2.  **Construcción y Push de la Imagen Docker**: El workflow construye la imagen Docker utilizando `dockerfile.prod` y la sube a GitHub Packages (`ghcr.io`).
-3.  **Despliegue en Railway**: Railway detecta la nueva imagen en GitHub Packages y automáticamente despliega la nueva versión de la aplicación.
+### Creating a Meeting
 
-### Configuración en Railway
-
-1.  **Conecta tu repositorio**: En Railway, crea un nuevo proyecto y conecta tu repositorio de GitHub.
-2.  **Configura el servicio**: 
-    *   Selecciona la opción para desplegar desde una **imagen Docker**.
-    *   Especifica la URL de la imagen de GitHub Packages. Por ejemplo: `ghcr.io/LostoVayne/meet-ai-platform:latest` (asegúrate de reemplazar `LostoVayne` con tu nombre de usuario de GitHub y `meet-ai-platform` con el nombre de tu repositorio).
-    *   Asegúrate de que Railway tenga los permisos necesarios para acceder a tus GitHub Packages.
-3.  **Variables de Entorno**: Configura todas las variables de entorno necesarias (las mismas que en `.env.local`) directamente en la configuración de tu servicio en Railway.
+1. Navigate to `/agents` and create an AI agent
+2. Go to `/meetings` and click "New Meeting"
+3. Select your agent and create the meeting
+4. Click "Join Meeting" to start the video call
 
 ---
 
-## 🧩 Uso de shadcn/ui
+## 🔐 Authentication
 
-- Componentes reutilizables en `src/components/ui/`.
-- Ejemplo:
+Built with **Better Auth** supporting:
 
-```tsx
-import { Button } from "@/components/ui/button";
-
-<Button variant="primary">Iniciar reunión</Button>;
-```
+- ✅ Email/Password authentication
+- ⚙️ GitHub OAuth (configure in .env)
+- ⚙️ Google OAuth (configure in .env)
 
 ---
 
-## 🔑 Better Auth
+## 📜 Available Scripts
 
-- Autenticación segura y moderna.
-- Flujos en `src/app/(auth)/sign-in` y `sign-up`.
-- Vistas personalizadas en `src/modules/auth/ui/views/`.
-
----
-
-## 💳 Polar (Pagos y Suscripciones)
-
-- Integración con Polar para suscripciones y pagos.
-- Configura tu clave en las variables de entorno.
-- El flujo de pago se maneja desde el dashboard.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run start` | Start production server |
+| `npm run db:push` | Push database schema |
+| `npm run db:studio` | Open Drizzle Studio |
+| `npm run lint` | Run ESLint |
 
 ---
 
-## 📚 Reglas y buenas prácticas
+## 🤝 Contributing
 
-- Usa **Bun** para desarrollo rápido y eficiente.
-- Sigue la convención de carpetas de Next.js (app router).
-- Componentes UI en `src/components/ui/`.
-- Hooks personalizados en `src/hooks/`.
-- Mantén dependencias actualizadas.
-- Usa ESLint y Prettier para mantener el código limpio.
-- No subas claves ni secretos al repositorio.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ---
 
-## 🧪 Testing
+## 📝 License
 
-- Próximamente: integración con Jest y pruebas E2E.
-
----
-
-## 🤝 Contribuir
-
-1. Haz un fork del repositorio.
-2. Crea una rama para tu feature/fix.
-3. Haz un PR describiendo tus cambios.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 📞 Soporte
+## 🙏 Acknowledgments
 
-¿Dudas o sugerencias? Abre un issue o contacta a [Lostovayne](https://github.com/LostoVayne).
+- [Stream](https://getstream.io) for the Video SDK
+- [shadcn/ui](https://ui.shadcn.com) for the UI components
+- [Better Auth](https://better-auth.com) for authentication
+- [Drizzle ORM](https://orm.drizzle.team) for database management
 
 ---
 
-## 📝 Licencia
-
-Este proyecto está bajo la Licencia MIT. Consulta el archivo [LICENSE](./LICENSE) para más detalles.
+Made with ❤️ by [berserk3142-max](https://github.com/berserk3142-max)
