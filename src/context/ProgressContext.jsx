@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { getAllTopics } from '../data/topics';
 
 const ProgressContext = createContext();
 
@@ -11,6 +12,9 @@ export function ProgressProvider({ children }) {
         const saved = localStorage.getItem('oopsify-progress');
         return saved ? JSON.parse(saved) : [];
     });
+
+    // Get total topics count
+    const totalTopics = getAllTopics().length;
 
     useEffect(() => {
         localStorage.setItem('oopsify-progress', JSON.stringify(completedTopics));
@@ -26,10 +30,20 @@ export function ProgressProvider({ children }) {
         setCompletedTopics(completedTopics.filter(id => id !== topicId));
     };
 
+    const toggleComplete = (topicId) => {
+        if (completedTopics.includes(topicId)) {
+            markIncomplete(topicId);
+        } else {
+            markComplete(topicId);
+        }
+    };
+
     const isCompleted = (topicId) => completedTopics.includes(topicId);
 
-    const getProgress = (totalTopics) => {
-        return Math.round((completedTopics.length / totalTopics) * 100);
+    // Calculate progress percentage
+    const getProgress = () => {
+        if (totalTopics === 0) return 0;
+        return (completedTopics.length / totalTopics) * 100;
     };
 
     const resetProgress = () => {
@@ -39,8 +53,10 @@ export function ProgressProvider({ children }) {
     return (
         <ProgressContext.Provider value={{
             completedTopics,
+            totalTopics,
             markComplete,
             markIncomplete,
+            toggleComplete,
             isCompleted,
             getProgress,
             resetProgress
