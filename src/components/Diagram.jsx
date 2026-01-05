@@ -3,49 +3,55 @@ import mermaid from 'mermaid';
 
 mermaid.initialize({
     startOnLoad: true,
-    theme: 'dark',
+    theme: 'base',
     themeVariables: {
-        primaryColor: '#8B5CF6',
-        primaryTextColor: '#fff',
-        primaryBorderColor: '#8B5CF6',
-        lineColor: '#06B6D4',
-        secondaryColor: '#1A2035',
-        tertiaryColor: '#242B42',
-        background: '#0F1420',
-        mainBkg: '#1A2035',
-        nodeBorder: '#8B5CF6',
-        clusterBkg: '#0F1420',
-        titleColor: '#fff',
-        edgeLabelBackground: '#0F1420',
+        primaryColor: '#04AA6D',
+        primaryTextColor: '#000000',
+        primaryBorderColor: '#04AA6D',
+        lineColor: '#555555',
+        secondaryColor: '#E7E9EB',
+        tertiaryColor: '#FFFFFF',
+        fontFamily: 'Source Sans Pro, sans-serif',
+        fontSize: '14px',
     },
     flowchart: {
-        htmlLabels: true,
         curve: 'basis',
-    },
+        padding: 20,
+    }
 });
 
-export default function Diagram({ code }) {
+function Diagram({ code }) {
     const containerRef = useRef(null);
 
     useEffect(() => {
         if (containerRef.current && code) {
             containerRef.current.innerHTML = '';
-            const id = `mermaid-${Math.random().toString(36).substr(2, 9)}`;
-
-            mermaid.render(id, code).then(({ svg }) => {
-                if (containerRef.current) {
-                    containerRef.current.innerHTML = svg;
-                }
-            }).catch(err => {
-                console.error('Mermaid error:', err);
-                if (containerRef.current) {
-                    containerRef.current.innerHTML = `<p class="text-red-400 text-sm">Diagram rendering error</p>`;
-                }
-            });
+            mermaid.render('mermaid-diagram-' + Date.now(), code)
+                .then(({ svg }) => {
+                    if (containerRef.current) {
+                        containerRef.current.innerHTML = svg;
+                    }
+                })
+                .catch(err => {
+                    console.error('Mermaid error:', err);
+                    if (containerRef.current) {
+                        containerRef.current.innerHTML = '<p style="color:#666">Diagram could not be rendered</p>';
+                    }
+                });
         }
     }, [code]);
 
     return (
-        <div ref={containerRef} className="diagram-container" />
+        <div
+            ref={containerRef}
+            style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                minHeight: '100px'
+            }}
+        />
     );
 }
+
+export default Diagram;
