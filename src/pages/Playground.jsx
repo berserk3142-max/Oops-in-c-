@@ -4,12 +4,12 @@ import { Play, Trash2, Download, Terminal, Code, FileCode } from 'lucide-react';
 
 const templates = {
     empty: {
-        name: 'Empty',
+        name: 'Empty Template',
         code: `#include <iostream>
 using namespace std;
 
 int main() {
-    
+    cout << "Hello, World!" << endl;
     return 0;
 }`
     },
@@ -113,13 +113,34 @@ export default function Playground() {
     const [code, setCode] = useState(templates.empty.code);
     const [output, setOutput] = useState('');
     const [isRunning, setIsRunning] = useState(false);
+    const [selectedTemplate, setSelectedTemplate] = useState('empty');
 
     const runCode = () => {
         setIsRunning(true);
         setTimeout(() => {
-            setOutput('// Simulated output\n// Connect to backend for real compilation\nProgram executed successfully!');
+            // Simulate output based on template
+            let simulatedOutput = '';
+            if (code.includes('Hello, World')) {
+                simulatedOutput = 'Hello, World!';
+            } else if (code.includes('MyClass')) {
+                simulatedOutput = 'Constructor called\nData: 42\nDestructor called';
+            } else if (code.includes('Dog')) {
+                simulatedOutput = 'Buddy says Woof!';
+            } else if (code.includes('Complex')) {
+                simulatedOutput = 'c1 = 3 + 4i\nc2 = 1 + 2i\nc1 + c2 = 4 + 6i';
+            } else {
+                simulatedOutput = 'Program executed successfully!';
+            }
+            setOutput(simulatedOutput);
             setIsRunning(false);
-        }, 1000);
+        }, 800);
+    };
+
+    const handleTemplateChange = (e) => {
+        const key = e.target.value;
+        setSelectedTemplate(key);
+        setCode(templates[key].code);
+        setOutput('');
     };
 
     const downloadCode = () => {
@@ -133,96 +154,142 @@ export default function Playground() {
     };
 
     return (
-        <div className="h-full flex flex-col gap-6">
+        <div className="content-area" style={{ maxWidth: '1200px' }}>
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-secondary/20 flex items-center justify-center">
-                        <Code size={20} className="text-secondary" />
-                    </div>
-                    <div>
-                        <h1 className="text-xl font-bold text-white">C++ Playground</h1>
-                        <p className="text-sm text-white/50">Write, run, and experiment</p>
-                    </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                    {/* Templates */}
-                    <select
-                        onChange={(e) => setCode(templates[e.target.value].code)}
-                        className="px-4 py-2.5 bg-white/5 rounded-xl border border-white/10 focus:border-primary/50 focus:outline-none text-sm text-white"
-                    >
-                        {Object.entries(templates).map(([key, val]) => (
-                            <option key={key} value={key} className="bg-dark-800">{val.name}</option>
-                        ))}
-                    </select>
-
-                    <button
-                        onClick={() => setCode('')}
-                        className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/10"
-                        title="Clear"
-                    >
-                        <Trash2 size={18} className="text-white/60" />
-                    </button>
-
-                    <button
-                        onClick={downloadCode}
-                        className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors border border-white/10"
-                        title="Download"
-                    >
-                        <Download size={18} className="text-white/60" />
-                    </button>
-
-                    <button
-                        onClick={runCode}
-                        disabled={isRunning}
-                        className="btn-primary flex items-center gap-2 !py-2.5"
-                    >
-                        <Play size={16} fill="white" />
-                        {isRunning ? 'Running...' : 'Run Code'}
-                    </button>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+                <div>
+                    <h1 style={{ marginBottom: '8px' }}>C++ Playground</h1>
+                    <p style={{ margin: 0 }}>Write, run, and experiment with C++ code</p>
                 </div>
             </div>
 
+            {/* Toolbar */}
+            <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                marginBottom: '20px',
+                flexWrap: 'wrap'
+            }}>
+                <select
+                    value={selectedTemplate}
+                    onChange={handleTemplateChange}
+                    style={{
+                        padding: '10px 16px',
+                        border: '1px solid #D4D4D4',
+                        borderRadius: '4px',
+                        fontSize: '14px',
+                        background: 'white',
+                        cursor: 'pointer'
+                    }}
+                >
+                    {Object.entries(templates).map(([key, val]) => (
+                        <option key={key} value={key}>{val.name}</option>
+                    ))}
+                </select>
+
+                <button
+                    onClick={() => { setCode(''); setOutput(''); }}
+                    className="btn-secondary"
+                    style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 16px' }}
+                >
+                    <Trash2 size={16} />
+                    Clear
+                </button>
+
+                <button
+                    onClick={downloadCode}
+                    className="btn-secondary"
+                    style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 16px' }}
+                >
+                    <Download size={16} />
+                    Download
+                </button>
+
+                <button
+                    onClick={runCode}
+                    disabled={isRunning}
+                    className="btn-primary"
+                    style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 20px' }}
+                >
+                    <Play size={16} fill="white" />
+                    {isRunning ? 'Running...' : 'Run Code'}
+                </button>
+            </div>
+
             {/* Editor + Output Grid */}
-            <div className="flex-1 grid grid-cols-2 gap-6 min-h-[400px]">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', minHeight: '500px' }}>
                 {/* Code Editor */}
-                <div className="code-block flex flex-col overflow-hidden">
-                    <div className="px-4 py-3 border-b border-white/10 flex items-center gap-3">
-                        <FileCode size={16} className="text-white/40" />
-                        <span className="text-sm text-white/60">main.cpp</span>
+                <div className="editor-container" style={{ display: 'flex', flexDirection: 'column' }}>
+                    <div className="editor-header">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <FileCode size={16} />
+                            <span className="editor-title">main.cpp</span>
+                        </div>
                     </div>
-                    <div className="flex-1">
+                    <div style={{ flex: 1, minHeight: '450px' }}>
                         <Editor
                             height="100%"
                             defaultLanguage="cpp"
                             value={code}
                             onChange={(value) => setCode(value || '')}
-                            theme="vs-dark"
+                            theme="vs"
                             options={{
                                 minimap: { enabled: false },
                                 fontSize: 14,
-                                fontFamily: "'JetBrains Mono', monospace",
+                                fontFamily: "'Consolas', 'Monaco', monospace",
                                 padding: { top: 16 },
                                 scrollBeyondLastLine: false,
                                 automaticLayout: true,
+                                lineNumbers: 'on',
+                                wordWrap: 'on',
                             }}
                         />
                     </div>
                 </div>
 
                 {/* Output */}
-                <div className="code-block flex flex-col overflow-hidden">
-                    <div className="px-4 py-3 border-b border-white/10 flex items-center gap-3">
-                        <Terminal size={16} className="text-green-400" />
-                        <span className="text-sm text-white/60">Output</span>
+                <div style={{
+                    border: '1px solid #D4D4D4',
+                    borderRadius: '5px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflow: 'hidden'
+                }}>
+                    <div style={{
+                        padding: '12px 16px',
+                        background: '#E7E9EB',
+                        borderBottom: '1px solid #D4D4D4',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                    }}>
+                        <Terminal size={16} style={{ color: '#04AA6D' }} />
+                        <span style={{ fontWeight: 600, fontSize: '14px' }}>Output</span>
                     </div>
-                    <div className="flex-1 p-4 overflow-auto">
-                        <pre className="font-mono text-sm text-green-400 whitespace-pre-wrap">
+                    <div style={{
+                        flex: 1,
+                        padding: '16px',
+                        background: '#1e1e1e',
+                        minHeight: '450px'
+                    }}>
+                        <pre style={{
+                            fontFamily: "'Consolas', monospace",
+                            fontSize: '14px',
+                            color: '#04AA6D',
+                            margin: 0,
+                            whiteSpace: 'pre-wrap'
+                        }}>
                             {output || '// Click "Run Code" to execute\n// Output will appear here'}
                         </pre>
                     </div>
                 </div>
+            </div>
+
+            {/* Info Box */}
+            <div className="info-box green" style={{ marginTop: '24px' }}>
+                <strong>💡 Tip:</strong> This is a simulated playground. For real C++ compilation,
+                you would need to connect to a backend service like Judge0, Wandbox, or run locally with g++.
             </div>
         </div>
     );
